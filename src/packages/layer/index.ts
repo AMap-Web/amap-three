@@ -1,0 +1,234 @@
+import {
+  PerspectiveCamera,
+  OrthographicCamera,
+  WebGLRenderer,
+  Scene,
+  Cache,
+} from 'three';
+import Event from '../event'
+import {clearScene} from "../../utils/threeUtil";
+
+interface Options{
+  zIndex?: number
+  visible?: boolean //  是否显示
+  zooms?: number[] // 支持的缩放级别范围，默认范围 [2, 20]
+  opacity?: number // 透明度，默认1
+  alpha?: boolean // canvas是否包含alpha (透明度)。默认为 false
+  antialias?: boolean //是否执行抗锯齿。默认为false
+  customCoordsCenter?: number[] // 默认gl自定义图层渲染的中心点
+}
+
+class ThreeLayer extends Event{
+  customCoords: any
+  center: number[] // 图层显示的中心点，默认是初始化时的地图中心，尽量使用模型的第一个点
+  layer: any // GLCustomLayer图层实例
+  renderer: WebGLRenderer;
+  camera: PerspectiveCamera | OrthographicCamera; // 相机实例
+  scene: Scene; //场景实例
+  options: Options //初始化参数
+  map: any; // 地图实例
+  frameTimer = -1; // 刷新图层的定时器
+  needsUpdate = false; //是否需要更新图层，默认false
+
+  constructor(map: any, options?: Options) {
+    super();
+    options = options || {};
+    this.customCoords = (map as any).customCoords;
+    this.center = options.customCoordsCenter || map.getCenter().toArray();
+    this.customCoords.lngLatsToCoords([
+      this.center
+    ])
+    const defaultOptions = {
+      zooms: [2,20],
+      opacity: 1,
+      alpha: false,
+      antialias: false,
+      visible: true,
+      zIndex: 120
+    }
+    this.options = Object.assign({}, defaultOptions, options);
+    this.map = map;
+    this.init();
+  }
+
+  init() {
+    const map = this.map;
+    const options = this.options;
+    const layerOptions = {
+      zooms: options.zooms,
+      opacity: options.opacity,
+      visible: options.visible,
+      zIndex: options.zIndex,
+      init: (gl) => {
+        // 这里我们的地图模式是 3D，所以创建一个透视相机，相机的参数初始化可以随意设置，因为在 render 函数中，每一帧都需要同步相机参数，因此这里变得不那么重要。
+        // 如果你需要 2D 地图（viewMode: '2D'），那么你需要创建一个正交相机
+        const container = map.getContainer();
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+        let camera;
+        if (map.getView().type === '3D') {
+          camera = new PerspectiveCamera(60, width / height, 100, 1 << 30);
+        } else {
+          camera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000);
+        }
+        const renderer = new WebGLRenderer({
+          context: gl, // 地图的 gl 上下文
+          alpha: options.alpha,
+          antialias: options.antialias
+          // canvas: gl.canvas,
+        });
+        renderer.setSize(width, height);
+
+        // 自动清空画布这里必须设置为 false，否则地图底图将无法显示
+        renderer.autoClear = false;
+        const scene = new Scene();
+        this.camera = camera;
+        this.renderer = renderer;
+        this.scene = scene;
+        this.animate();
+        this.emit('complete');
+      },
+      render: () => {
+        // 这里必须执行！！重新设置 three 的 gl 上下文状态。
+        this.renderer.resetState();
+        this.customCoords.setCenter(this.center);
+        const camera = this.camera;
+        // 2D 地图下使用的正交相机
+        if (map.getView().type === '3D') {
+          const {near, far, fov, up, lookAt, position} = this.customCoords.getCameraParams();
+          // 2D 地图下使用的正交相机
+          // 这里的顺序不能颠倒，否则可能会出现绘制卡顿的效果。
+          camera.near = near;
+          camera.far = far;
+          camera.fov = fov;
+          camera.position.set(...position);
+          camera.up.set(...up);
+          camera.lookAt(...lookAt);
+          camera.updateProjectionMatrix();
+        } else {
+          const {top, bottom, left, right, position} = this.customCoords.getCameraParams();
+          // 2D 地图使用的正交相机参数赋值
+          camera.top = top;
+          camera.bottom = bottom;
+          camera.left = left;
+          camera.right = right;
+          camera.position.set(...position);
+          camera.updateProjectionMatrix();
+        }
+        this.camera = camera;
+        this.renderer.render(this.scene, camera);
+        this.renderer.resetState();
+      }
+    }
+    this.layer = new AMap.GLCustomLayer(layerOptions);
+    this.layer.setMap(map);
+  }
+
+  update(){
+    this.needsUpdate = true;
+  }
+
+  animate() {
+    if (this.needsUpdate) {
+      this.refreshMap();
+      this.needsUpdate = false;
+    }
+    this.frameTimer = requestAnimationFrame(() => {
+      this.animate();
+    });
+  }
+
+  refreshMap() {
+    if (this.map) {
+      this.map.render();
+    }
+  }
+
+  convertLngLat(lnglat) {
+    const data = this.customCoords.lngLatsToCoords([
+      lnglat
+    ]);
+    return data[0];
+  }
+
+  // 往场景中添加对象
+  add(object) {
+    this.scene.add(object);
+    this.refreshMap();
+  }
+
+  // 从场景中移除对象
+  remove(object) {
+    this.scene.remove(object);
+    this.refreshMap();
+  }
+
+  getScene() {
+    return this.scene
+  }
+
+  getCamera() {
+    return this.camera;
+  }
+
+  getRender() {
+    return this.renderer;
+  }
+
+  destroy() {
+    cancelAnimationFrame(this.frameTimer);
+    this.layer.setMap(null);
+    this.customCoords = null;
+    clearScene(this.scene);
+    this.scene = null;
+    this.camera = null;
+    this.renderer.dispose();
+    this.renderer = null;
+    this.layer = null;
+    this.map = null;
+    Cache.clear();
+    this.options = null as any;
+  }
+
+  getMap(){
+    if(this.map){
+      return this.map;
+    }
+    return null;
+  }
+
+  getOpacity() : number{
+    return this.layer.getOpacity();
+  }
+
+  setOpacity(opacity: number){
+    this.layer.setOpacity(opacity);
+  }
+
+  getZooms() : number[]{
+    return this.layer.getZooms();
+  }
+
+  setZooms(zooms: number[]){
+    this.layer.setZooms(zooms);
+  }
+
+  getzIndex() : number{
+    return this.layer.getzIndex();
+  }
+
+  setzIndex(zIndex: number){
+    this.layer.setzIndex(zIndex);
+  }
+
+  show(){
+    this.layer.show();
+  }
+
+  hide(){
+    this.layer.hide();
+  }
+
+}
+
+export {ThreeLayer}

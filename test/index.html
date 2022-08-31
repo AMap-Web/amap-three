@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试</title>
+    <script src = 'https://webapi.amap.com/maps?v=2.0&key=747f980f217a31ba68d99301045a3fa7'></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="/index.js" ></script>
+  </head>
+  <body>
+    <div id="app" style="height: 600px;"></div>
+    <script type="text/javascript">
+      const map = new AMap.Map('app', {
+        center: [120,31],
+        zoom: 14,
+        viewMode: '3D',
+        pitch: 35
+      })
+      const layer = new AMap.ThreeLayer(map)
+      layer.on('complete', () => {
+        const light = new THREE.AmbientLight('#ffffff', 1);
+        layer.add(light);
+        const gltf = new AMap.ThreeGltf(layer, {
+          url: 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
+          position: [120, 31],
+          scale: 800,
+          rotation: {
+            x:90,
+            y:0,
+            z:0
+          },
+          angle: -90
+        })
+        gltf.on('complete', (e) => {
+          console.log('gltf complete: ', e)
+        })
+        console.log('layer: ', layer)
+        console.log('gltf: ', gltf)
+      })
+
+    </script>
+  </body>
+</html>
