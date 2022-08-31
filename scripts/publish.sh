@@ -4,6 +4,8 @@ set -e
 
 pnpm run build
 
+cd ..
+
 npm publish
 cd -
 
