@@ -1,3 +1,10 @@
+# @amap/three-layer
+[![npm (tag)](https://img.shields.io/npm/v/@amap/three-layer)](https://www.npmjs.org/package/@amap/three-layer)
+[![NPM downloads](http://img.shields.io/npm/dm/@amap/three-layer.svg)](https://npmjs.org/package/@amap/three-layer)
+![JS gzip size](http://img.badgesize.io/https://unpkg.com/@amap/three-layer/dist/index.js?compression=gzip&label=gzip%20size:%20JS)
+[![NPM](https://img.shields.io/npm/l/@amap/three-layer)](https://github.com/AMap-Web/amap-three)
+[![star](https://badgen.net/github/stars/amap-web/amap-three)](https://github.com/AMap-Web/amap-three)
+
 ### 简介
 本项目为高德地图的threejs图层插件，包含ThreeLayer图层、ThreeGltf加载
 
@@ -10,9 +17,9 @@ CDN加载需要先加载高德地图JS和threejs的库，代码如下
 <!--加载高德地图JS 2.0 -->
 <script src = 'https://webapi.amap.com/maps?v=2.0&key=YOUR_KEY'></script>
 <!--加载threejs -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.143/build/three.js"></script>
 <!--加载threejs的GLTFLoader -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.143/examples/js/loaders/GLTFLoader.js"></script>
 <!--加载three-layer插件 -->
 <script src="https://cdn.jsdelivr.net/npm/@amap/three-layer/dist/index.js"></script>
 ```
@@ -28,8 +35,8 @@ npm install '@amap/three-layer'
 #### CDN方式
 ```js
 <script src = 'https://webapi.amap.com/maps?v=2.0&key=YOUR_KEY'></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.143/build/three.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.143/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@amap/three-layer/dist/index.js"></script>
 <script type="text/javascript">
   const map = new AMap.Map('app', {
