@@ -6,7 +6,7 @@ pnpm run build
 
 cd ..
 
-npm publish
+npm publish --access public
 cd -
 
 echo "Publish completed"
