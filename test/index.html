@@ -22,19 +22,26 @@
       layer.on('complete', () => {
         const light = new THREE.AmbientLight('#ffffff', 1);
         layer.add(light);
+        let position = [120, 31]
         const gltf = new AMap.ThreeGltf(layer, {
           url: 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
-          position: [120, 31],
+          position: position,
           scale: 800,
           rotation: {
             x:90,
             y:0,
             z:0
           },
-          angle: -90
+          angle: 0
         })
         gltf.on('complete', (e) => {
           console.log('gltf complete: ', e)
+          setInterval(() => {
+            position[0] += 0.0001
+            console.log('position: ',position)
+            gltf.setPosition(position);
+          }, 500)
+
         })
         console.log('layer: ', layer)
         console.log('gltf: ', gltf)

@@ -14,7 +14,7 @@ interface Options {
   position: number[] // 模型的经纬度
   height: number  // 高度，模型的离地高度
   rotation: Vec // 模型旋转角度
-  scale: number | number[]  //模型缩放级别，可以整体缩放和按X Y Z缩放
+  scale: number | Vec  //模型缩放级别，可以整体缩放和按X Y Z缩放
   angle: number //  模型旋转角度
 }
 
@@ -63,14 +63,18 @@ class ThreeGltf extends BaseEvent{
     });
   }
 
-  setScale(scale: number | number[]) {
-    let scaleArray: number[];
+  setScale(scale: number | Vec) {
+    let scaleVec: Vec;
     if (typeof scale === 'number') {
-      scaleArray = [scale, scale, scale];
+      scaleVec = {
+        x: scale,
+        y: scale,
+        z: scale
+      };
     } else {
-      scaleArray = scale;
+      scaleVec = scale;
     }
-    this.object.scale.set(...scaleArray);
+    this.object.scale.set(scaleVec.x, scaleVec.y, scaleVec.z);
     this.refresh();
   }
 

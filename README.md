@@ -147,14 +147,14 @@ options: ThreeGltf初始化参数，参数内容如下：
 | position | [Number,Number]                  | 模型的经纬度位置信息                        |
 | height  | Number                           | 模型离地高度，默认0                        |
 | rotation | {x:Number, y: Number, z: Number} | 模型旋转角度，用于调整模型方向  默认 {x:0,y:0,z:0} |
-| scale   | Number，[Number,Number,Number]    | 模型缩放比例，可以传入数值或者数组，默认 1            |
+| scale   | Number，{x:Number, y: Number, z: Number}    | 模型缩放比例，可以传入数值或者VEC3数据，默认 1        |
 | angle | Number                           | 模型旋转角度，一般用于车辆模型角度使用，默认 0          |
 
 ###### 成员函数
 
 | 函数名 | 入参                               | 返回值          | 描述               |
 |-----|----------------------------------|--------------|------------------|
-| setScale | Number，[Number,Number,Number]    | 无            | 设置缩放比例           |
+| setScale | Number，{x:Number, y: Number, z: Number}    | 无            | 设置缩放比例           |
 | setPosition | [Number,Number] (经纬度)            | 无            | 设置模型位置           |
 | setRotation | {x:Number, y: Number, z: Number} | 无            | 旋转模型             |
 | setAngle | Number                           | 无            | 设置模型旋转角度 0 - 360 |
