@@ -14,7 +14,7 @@ CDN加载需要先加载高德地图JS和threejs的库，代码如下
 <!--加载threejs的GLTFLoader -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
 <!--加载three-layer插件 -->
-<script src="https://cdn.jsdelivr.net/npm/@amap/three-layer@0.0.1/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@amap/three-layer/dist/index.js"></script>
 ```
 
 #### npm加载
@@ -30,7 +30,7 @@ npm install '@amap/three-layer'
 <script src = 'https://webapi.amap.com/maps?v=2.0&key=YOUR_KEY'></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@amap/three-layer@0.0.1/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@amap/three-layer/dist/index.js"></script>
 <script type="text/javascript">
   const map = new AMap.Map('app', {
       center: [120,31],
