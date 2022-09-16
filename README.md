@@ -5,6 +5,9 @@
 [![NPM](https://img.shields.io/npm/l/@amap/three-layer)](https://github.com/AMap-Web/amap-three)
 [![star](https://badgen.net/github/stars/amap-web/amap-three)](https://github.com/AMap-Web/amap-three)
 
+### 示例
+[codepen示例](https://codepen.io/yangyanggu/pen/jOxyJqp)
+
 ### 简介
 本项目为高德地图的threejs图层插件，包含ThreeLayer图层、ThreeGltf加载
 
