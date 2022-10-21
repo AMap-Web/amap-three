@@ -1,7 +1,8 @@
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {AnimationMixer, Clock} from 'three';
+import { AnimationMixer, Clock} from 'three';
 import BaseEvent from '../event'
 import {clearGroup} from '../../utils/threeUtil';
+import type {AnimationClip, Group} from 'three';
 
 interface Vec {
   x: number
@@ -9,13 +10,14 @@ interface Vec {
   z: number
 }
 
-interface Options {
+export interface GltfOptions {
   url: string //模型下载地址
   position: number[] // 模型的经纬度
   height: number  // 高度，模型的离地高度
   rotation: Vec // 模型旋转角度
   scale: number | Vec  //模型缩放级别，可以整体缩放和按X Y Z缩放
   angle: number //  模型旋转角度
+  onLoaded: (gltf: Group, animations:  AnimationClip[]) => void // gltf加载并且处理完成后回调
 }
 
 class ThreeGltf extends BaseEvent{
@@ -24,7 +26,7 @@ class ThreeGltf extends BaseEvent{
   layer: any // threejs的图层对象
   linerAnimationFrame = -1; //gltf动画
 
-  constructor(layer: any, options: Options) {
+  constructor(layer: any, options: GltfOptions) {
     super();
     this.layer = layer;
     const defaultOptions = {
@@ -43,7 +45,7 @@ class ThreeGltf extends BaseEvent{
     this.init(options);
   }
 
-  init(options: Options) {
+  init(options: GltfOptions) {
     const loader = new GLTFLoader(); // 读取模型
     loader.load(options.url, (gltf) => {
       const object = gltf.scene;
@@ -56,6 +58,9 @@ class ThreeGltf extends BaseEvent{
       this.setAngle(options.angle);
       this.setPosition(options.position);
       this.setHeight(options.height);
+      if(options.onLoaded){
+        options.onLoaded(object,animations);
+      }
       this.emit('complete', {
         target: object,
         animations

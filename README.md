@@ -106,15 +106,17 @@ layer.on('complete', () => {
 map: 地图实例对象<br/>
 options: ThreeLayer初始化参数，参数内容如下：
 
-| 属性名 | 属性类型            | 属性描述 |
-| ---- |-----------------| ---- |
-| zIndex | Number          | 图层的层级，默认为 120 |
-| visible | Boolean         | 图层是否可见，默认为 true |
-| zooms  | [Number,Number] | 图层缩放等级范围，默认 [2, 20] |
-| opacity | Number          | 图层透明度，默认为 1 |
-| alpha   | Boolean         | canvas是否包含alpha (透明度)。默认为 false |
-| antialias | Boolean | 是否执行抗锯齿。默认为false |
-| customCoordsCenter | [Number,Number] | gl自定义图层渲染的中心点，默认为初始化时的地图中心点 |
+| 属性名 | 属性类型            | 属性描述                               |
+| ---- |-----------------|------------------------------------|
+| zIndex | Number          | 图层的层级，默认为 120                      |
+| visible | Boolean         | 图层是否可见，默认为 true                    |
+| zooms  | [Number,Number] | 图层缩放等级范围，默认 [2, 20]                |
+| opacity | Number          | 图层透明度，默认为 1                        |
+| alpha   | Boolean         | canvas是否包含alpha (透明度)。默认为 false    |
+| antialias | Boolean | 是否执行抗锯齿。默认为false                   |
+| customCoordsCenter | [Number,Number] | gl自定义图层渲染的中心点，默认为初始化时的地图中心点        |
+| onInit | Function(render: WebGLRenderer, scene: Scene, camera: Camera) | GlCustomLayer的init执行后触发回调，用于扩展处理能力 |
+| onRender | render: WebGLRenderer, scene: Scene, camera: Camera) | GlCustomLayer的render触发时触发该回调，用于替换刷新功能，可以用于增加threejs的后期处理 | 
 
 ###### 成员函数
 
@@ -151,14 +153,15 @@ options: ThreeLayer初始化参数，参数内容如下：
 layer: ThreeLayer实例对象<br/>
 options: ThreeGltf初始化参数，参数内容如下：
 
-| 属性名 | 属性类型                             | 属性描述                              |
-| ---- |----------------------------------|-----------------------------------|
-| url | String                           | 模型加载地址                            |
-| position | [Number,Number]                  | 模型的经纬度位置信息                        |
-| height  | Number                           | 模型离地高度，默认0                        |
-| rotation | {x:Number, y: Number, z: Number} | 模型旋转角度，用于调整模型方向  默认 {x:0,y:0,z:0} |
-| scale   | Number，{x:Number, y: Number, z: Number}    | 模型缩放比例，可以传入数值或者VEC3数据，默认 1        |
-| angle | Number                           | 模型旋转角度，一般用于车辆模型角度使用，默认 0          |
+| 属性名 | 属性类型                                                        | 属性描述                              |
+| ---- |-------------------------------------------------------------|-----------------------------------|
+| url | String                                                      | 模型加载地址                            |
+| position | [Number,Number]                                             | 模型的经纬度位置信息                        |
+| height  | Number                                                      | 模型离地高度，默认0                        |
+| rotation | {x:Number, y: Number, z: Number}                            | 模型旋转角度，用于调整模型方向  默认 {x:0,y:0,z:0} |
+| scale   | Number，{x:Number, y: Number, z: Number}                     | 模型缩放比例，可以传入数值或者VEC3数据，默认 1        |
+| angle | Number                                                      | 模型旋转角度，一般用于车辆模型角度使用，默认 0          |
+| onLoaded | Function(gltf: Group, animations:  AnimationClip[]) | 模型加载完成后触发回调 | 
 
 ###### 成员函数
 

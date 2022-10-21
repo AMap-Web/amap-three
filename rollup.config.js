@@ -84,7 +84,7 @@ export default {
     !isProd() && serve({
       open: true,
       port: 8080,
-      contentBase: ['dist', 'test'],
+      contentBase: ['dist', 'test', './'],
       openPage: '/index.html'
     })
   ]

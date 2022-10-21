@@ -7,8 +7,9 @@ import {
 } from 'three';
 import Event from '../event'
 import {clearScene} from "../../utils/threeUtil";
+import type {Camera} from 'three';
 
-interface Options{
+export interface ThreeLayerOptions{
   zIndex?: number
   visible?: boolean //  是否显示
   zooms?: number[] // 支持的缩放级别范围，默认范围 [2, 20]
@@ -16,21 +17,23 @@ interface Options{
   alpha?: boolean // canvas是否包含alpha (透明度)。默认为 false
   antialias?: boolean //是否执行抗锯齿。默认为false
   customCoordsCenter?: number[] // 默认gl自定义图层渲染的中心点
+  onInit?: (render: WebGLRenderer, scene: Scene, camera: Camera) => void // 初始化完成做处理，主要用于GlCustom的init执行后做一些处理
+  onRender?: (render: WebGLRenderer, scene: Scene, camera: Camera) => void // 渲染时候执行，用于替换默认的render，可以扩展后期处理等功能
 }
 
 class ThreeLayer extends Event{
   customCoords: any
   center: number[] // 图层显示的中心点，默认是初始化时的地图中心，尽量使用模型的第一个点
   layer: any // GLCustomLayer图层实例
-  renderer: WebGLRenderer;
-  camera: PerspectiveCamera | OrthographicCamera; // 相机实例
-  scene: Scene; //场景实例
-  options: Options //初始化参数
+  renderer?: WebGLRenderer;
+  camera?: PerspectiveCamera | OrthographicCamera; // 相机实例
+  scene?: Scene; //场景实例
+  options: ThreeLayerOptions //初始化参数
   map: any; // 地图实例
   frameTimer = -1; // 刷新图层的定时器
   needsUpdate = false; //是否需要更新图层，默认false
 
-  constructor(map: any, options?: Options) {
+  constructor(map: any, options?: ThreeLayerOptions) {
     super();
     options = options || {};
     this.customCoords = (map as any).customCoords;
@@ -85,39 +88,59 @@ class ThreeLayer extends Event{
         this.camera = camera;
         this.renderer = renderer;
         this.scene = scene;
+        if(options.onInit){
+          options.onInit(renderer,scene,camera);
+        }
         this.animate();
         this.emit('complete');
       },
       render: () => {
         // 这里必须执行！！重新设置 three 的 gl 上下文状态。
-        this.renderer.resetState();
+        this.renderer?.resetState();
         this.customCoords.setCenter(this.center);
         const camera = this.camera;
         // 2D 地图下使用的正交相机
         if (map.getView().type === '3D') {
-          const {near, far, fov, up, lookAt, position} = this.customCoords.getCameraParams();
+          const {near, far, fov, up, lookAt, position} = this.customCoords.getCameraParams() as {
+            near: number;
+            far: number;
+            fov: number;
+            up: [number, number,number];
+            lookAt: [number, number,number];
+            position: [number, number,number]
+          };
           // 2D 地图下使用的正交相机
           // 这里的顺序不能颠倒，否则可能会出现绘制卡顿的效果。
-          camera.near = near;
-          camera.far = far;
-          camera.fov = fov;
-          camera.position.set(...position);
-          camera.up.set(...up);
-          camera.lookAt(...lookAt);
-          camera.updateProjectionMatrix();
+          (camera as PerspectiveCamera).near = near;
+          (camera as PerspectiveCamera).far = far;
+          (camera as PerspectiveCamera).fov = fov;
+          (camera as PerspectiveCamera).position.set(...position);
+          (camera as PerspectiveCamera).up.set(...up);
+          (camera as PerspectiveCamera).lookAt(...lookAt);
+          (camera as PerspectiveCamera).updateProjectionMatrix();
         } else {
-          const {top, bottom, left, right, position} = this.customCoords.getCameraParams();
+          const {top, bottom, left, right, position} = this.customCoords.getCameraParams() as {
+            top: number;
+            bottom: number;
+            left: number;
+            right: number;
+            position: [number, number, number]
+          };
           // 2D 地图使用的正交相机参数赋值
-          camera.top = top;
-          camera.bottom = bottom;
-          camera.left = left;
-          camera.right = right;
-          camera.position.set(...position);
-          camera.updateProjectionMatrix();
+          (camera as OrthographicCamera).top = top;
+          (camera as OrthographicCamera).bottom = bottom;
+          (camera as OrthographicCamera).left = left;
+          (camera as OrthographicCamera).right = right;
+          (camera as OrthographicCamera).position.set(...position);
+          (camera as OrthographicCamera).updateProjectionMatrix();
         }
         this.camera = camera;
-        this.renderer.render(this.scene, camera);
-        this.renderer.resetState();
+        if(options.onRender){
+          options.onRender(this.renderer as WebGLRenderer,this.scene as Scene,this.camera as Camera);
+        }else{
+          this.renderer?.render(this.scene as Scene, camera as Camera);
+        }
+        this.renderer?.resetState();
       }
     }
     this.layer = new AMap.GLCustomLayer(layerOptions);
@@ -153,13 +176,13 @@ class ThreeLayer extends Event{
 
   // 往场景中添加对象
   add(object) {
-    this.scene.add(object);
+    this.scene?.add(object);
     this.refreshMap();
   }
 
   // 从场景中移除对象
   remove(object) {
-    this.scene.remove(object);
+    this.scene?.remove(object);
     this.refreshMap();
   }
 
@@ -180,10 +203,10 @@ class ThreeLayer extends Event{
     this.layer.setMap(null);
     this.customCoords = null;
     clearScene(this.scene);
-    this.scene = null;
-    this.camera = null;
-    this.renderer.dispose();
-    this.renderer = null;
+    this.scene = undefined;
+    this.camera = undefined;
+    this.renderer?.dispose();
+    this.renderer = undefined;
     this.layer = null;
     this.map = null;
     Cache.clear();

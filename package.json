@@ -1,10 +1,12 @@
 {
   "name": "@amap/three-layer",
-  "version": "0.0.2",
-  "description": "amap threejs layer plugin",
+  "version": "0.0.3",
+  "description": "高德地图amap的threejs图层插件",
   "keywords": [
     "amap",
-    "threejs"
+    "threejs",
+    "高德地图",
+    "threejs图层"
   ],
   "exports": {
     ".": {
@@ -47,6 +49,7 @@
   "homepage": "https://github.com/AMap-Web/amap-three",
   "dependencies": {
     "@amap/amap-jsapi-types": "^0.0.8",
+    "@types/three": "0.143.0",
     "three": "0.143.0"
   },
   "devDependencies": {
@@ -69,15 +72,15 @@
     "fs-extra": "10.0.0",
     "gulp": "4.0.2",
     "lint-staged": "^12.4.0",
+    "magic-string": "^0.25.7",
     "prettier": "^2.7.1",
     "rimraf": "3.0.2",
     "rollup": "^2.78.1",
     "rollup-plugin-esbuild": "4.9.3",
     "rollup-plugin-filesize": "9.1.2",
-    "rollup-plugin-serve": "^2.0.1",
     "rollup-plugin-livereload": "^2.0.5",
-    "typescript": "^4.7.4",
-    "magic-string": "^0.25.7"
+    "rollup-plugin-serve": "^2.0.1",
+    "typescript": "^4.7.4"
   },
   "types": "dist/index.d.ts",
   "files": [
