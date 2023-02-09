@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>测试</title>
     <script src = 'https://webapi.amap.com/maps?v=2.0&key=747f980f217a31ba68d99301045a3fa7'></script>
+    <script src="https://webapi.amap.com/loca?v=2.0.0&key=747f980f217a31ba68d99301045a3fa7"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
     <script src="/index.js" ></script>
@@ -13,7 +14,7 @@
     <div id="app" style="height: 600px;"></div>
     <script type="text/javascript">
       const map = new AMap.Map('app', {
-        center: [120,31],
+        center: [116.54, 39.79],
         zoom: 14,
         viewMode: '3D',
         pitch: 35
@@ -22,15 +23,11 @@
         onInit(){
           console.log('init layer')
         },
-        onRender(renderer, scene, camera){
-          renderer.render(scene , camera)
-          console.log('render layer')
-        }
       })
       layer.on('complete', () => {
         const light = new THREE.AmbientLight('#ffffff', 1);
         layer.add(light);
-        let position = [120, 31]
+        let position = [116.54, 39.79]
         const gltf = new AMap.ThreeGltf(layer, {
           url: 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
           position: position,
@@ -42,18 +39,37 @@
           },
           angle: 0
         })
-        gltf.on('complete', (e) => {
-          console.log('gltf complete: ', e)
-          setInterval(() => {
-            position[0] += 0.0001
-            console.log('position: ',position)
-            gltf.setPosition(position);
-          }, 500)
-
-        })
         console.log('layer: ', layer)
         console.log('gltf: ', gltf)
       })
+
+      let loca = new Loca.Container({
+        map,
+      });
+
+      let geo = new Loca.GeoJSONSource({
+        url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/bj_bus.json',
+      });
+
+      let ll = new Loca.LineLayer({
+        loca
+      });
+      let colors = ['#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'].reverse();
+      ll.setSource(geo, {
+        color: function (index, prop) {
+          let i = index % colors.length;
+          return colors[i];
+        },
+        lineWidth: (index, prop) => {
+          let i = index % colors.length;
+          return i * 0.1 + 2;
+        },
+        altitude: function (index, feature) {
+          let i = index % colors.length;
+          return 100 * i;
+        },
+        dash: [10, 4, 10, 2],
+      });
 
     </script>
   </body>

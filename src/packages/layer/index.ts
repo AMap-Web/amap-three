@@ -168,6 +168,7 @@ class ThreeLayer extends Event{
   }
 
   convertLngLat(lnglat) {
+    this.customCoords.setCenter(this.center)
     const data = this.customCoords.lngLatsToCoords([
       lnglat
     ]);
