@@ -23,9 +23,9 @@ export interface GltfOptions {
 }
 
 class ThreeGltf extends BaseEvent{
-  object: any // 加载模型后的Object3D对象
-  animations: any // 模型的动画
-  layer: any // threejs的图层对象
+  object: any; // 加载模型后的Object3D对象
+  animations: any; // 模型的动画
+  layer: any; // threejs的图层对象
   linerAnimationFrame = -1; //gltf动画
 
   constructor(layer: any, options: GltfOptions) {
@@ -43,16 +43,16 @@ class ThreeGltf extends BaseEvent{
       scale: 1,
       angle: 0
     }
-    options = Object.assign({}, defaultOptions, options)
+    options = Object.assign({}, defaultOptions, options);
     this.init(options);
   }
 
   init(options: GltfOptions) {
     const loader = new GLTFLoader(); // 读取模型
     if (options.draco){
-      const dracoLoader = new DRACOLoader()
-      dracoLoader.setDecoderPath(options.draco)
-      loader.setDRACOLoader(dracoLoader)
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(options.draco);
+      loader.setDRACOLoader(dracoLoader);
     }
     loader.load(options.url, (gltf) => {
       const object = gltf.scene;
@@ -178,7 +178,7 @@ class ThreeGltf extends BaseEvent{
 
   remove(){
     if (this.object) {
-      this.layer.remove(this.object)
+      this.layer.remove(this.object);
     }
   }
 
