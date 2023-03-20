@@ -1,6 +1,7 @@
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { AnimationMixer, Clock} from 'three';
-import BaseEvent from '../event'
+import BaseEvent from '../event';
 import {clearGroup} from '../../utils/threeUtil';
 import type {AnimationClip, Group} from 'three';
 
@@ -17,13 +18,14 @@ export interface GltfOptions {
   rotation: Vec // 模型旋转角度
   scale: number | Vec  //模型缩放级别，可以整体缩放和按X Y Z缩放
   angle: number //  模型旋转角度
+  draco: string // 模型DRACO解压库文件路径
   onLoaded: (gltf: Group, animations:  AnimationClip[]) => void // gltf加载并且处理完成后回调
 }
 
 class ThreeGltf extends BaseEvent{
-  object: any // 加载模型后的Object3D对象
-  animations: any // 模型的动画
-  layer: any // threejs的图层对象
+  object: any; // 加载模型后的Object3D对象
+  animations: any; // 模型的动画
+  layer: any; // threejs的图层对象
   linerAnimationFrame = -1; //gltf动画
 
   constructor(layer: any, options: GltfOptions) {
@@ -41,12 +43,17 @@ class ThreeGltf extends BaseEvent{
       scale: 1,
       angle: 0
     }
-    options = Object.assign({}, defaultOptions, options)
+    options = Object.assign({}, defaultOptions, options);
     this.init(options);
   }
 
   init(options: GltfOptions) {
     const loader = new GLTFLoader(); // 读取模型
+    if (options.draco){
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(options.draco);
+      loader.setDRACOLoader(dracoLoader);
+    }
     loader.load(options.url, (gltf) => {
       const object = gltf.scene;
       const animations = gltf.animations;
@@ -171,7 +178,7 @@ class ThreeGltf extends BaseEvent{
 
   remove(){
     if (this.object) {
-      this.layer.remove(this.object)
+      this.layer.remove(this.object);
     }
   }
 
