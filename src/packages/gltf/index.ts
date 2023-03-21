@@ -1,5 +1,4 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { AnimationMixer, Clock} from 'three';
 import BaseEvent from '../event';
 import {clearGroup} from '../../utils/threeUtil';
@@ -18,7 +17,7 @@ export interface GltfOptions {
   rotation: Vec // 模型旋转角度
   scale: number | Vec  //模型缩放级别，可以整体缩放和按X Y Z缩放
   angle: number //  模型旋转角度
-  draco: string // 模型DRACO解压库文件路径
+  configLoader: (loader: GLTFLoader) => void // 配置loader，用于添加draco等扩展
   onLoaded: (gltf: Group, animations:  AnimationClip[]) => void // gltf加载并且处理完成后回调
 }
 
@@ -49,10 +48,8 @@ class ThreeGltf extends BaseEvent{
 
   init(options: GltfOptions) {
     const loader = new GLTFLoader(); // 读取模型
-    if (options.draco){
-      const dracoLoader = new DRACOLoader();
-      dracoLoader.setDecoderPath(options.draco);
-      loader.setDRACOLoader(dracoLoader);
+    if (options.configLoader){
+      options.configLoader(loader)
     }
     loader.load(options.url, (gltf) => {
       const object = gltf.scene;

@@ -8,6 +8,7 @@
     <script src="https://webapi.amap.com/loca?v=2.0.0&key=747f980f217a31ba68d99301045a3fa7"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.142/build/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.142/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.143/examples/js/loaders/DRACOLoader.js"></script>
     <script src="/index.js" ></script>
   </head>
   <body>
@@ -29,7 +30,12 @@
         layer.add(light);
         let position = [116.54, 39.79]
         const gltf = new AMap.ThreeGltf(layer, {
-          url: 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
+          url: './ferrari.glb',
+          configLoader: (loader) =>{
+            const dracoLoader = new THREE.DRACOLoader()
+            dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.143/examples/js/libs/draco/');
+            loader.setDRACOLoader( dracoLoader );
+          },
           position: position,
           scale: 800,
           rotation: {

@@ -40,6 +40,7 @@ npm install '@amap/three-layer'
 <script src = 'https://webapi.amap.com/maps?v=2.0&key=YOUR_KEY'></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.143/build/three.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.143/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.143/examples/js/loaders/DRACOLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@amap/three-layer/dist/index.js"></script>
 <script type="text/javascript">
   const map = new AMap.Map('app', {
@@ -54,13 +55,18 @@ npm install '@amap/three-layer'
       layer.add(light);
       const gltf = new AMap.ThreeGltf(layer, {
           url: 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
+          configLoader: (loader) =>{
+              const dracoLoader = new THREE.DRACOLoader()
+              dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.143/examples/js/libs/draco/');
+              loader.setDRACOLoader( dracoLoader );
+          },
           position: [120, 31],
           scale: 800,
           rotation: {
-          x:90,
-          y:0,
-          z:0
-        }
+              x:90,
+              y:0,
+              z:0
+          }
       })
       console.log('layer: ', layer)
       console.log('gltf: ', gltf)
@@ -161,7 +167,8 @@ options: ThreeGltf初始化参数，参数内容如下：
 | rotation | {x:Number, y: Number, z: Number}                            | 模型旋转角度，用于调整模型方向  默认 {x:0,y:0,z:0} |
 | scale   | Number，{x:Number, y: Number, z: Number}                     | 模型缩放比例，可以传入数值或者VEC3数据，默认 1        |
 | angle | Number                                                      | 模型旋转角度，一般用于车辆模型角度使用，默认 0          |
-| onLoaded | Function(gltf: Group, animations:  AnimationClip[]) | 模型加载完成后触发回调 | 
+| onLoaded | Function(gltf: Group, animations:  AnimationClip[]) | 模型加载完成后触发回调                       | 
+| configLoader | (loader: GLTFLoader) => void                                                      | 配置loader，用于添加draco等扩展               |
 
 ###### 成员函数
 
