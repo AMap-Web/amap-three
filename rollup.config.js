@@ -35,12 +35,12 @@ export default {
       //这样，在通过<script>标签引入时，才能通过name访问到export的内容。
     },
     {
-      file: './dist/index-es.js',
+      file: './dist/index.mjs',
       format: 'es',
       sourcemap: true
     },
     {
-      file: './dist/index-cjs.js',
+      file: './dist/index.cjs',
       format: 'cjs',
       sourcemap: true
     }
