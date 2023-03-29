@@ -1,8 +1,7 @@
-### 0.0.6
-* Gltf增加configLoader,用于扩展gltf配置，增加扩展能力
-
 ### 0.0.5
 * 解决与loca一起使用时坐标转换异常问题
+* Gltf增加configLoader,用于扩展gltf配置，增加扩展能力
+* 修改打包，es包后缀更改为mjs
 
 ### 0.0.4
 * 解决发包问题
