@@ -47,9 +47,9 @@
   },
   "homepage": "https://github.com/AMap-Web/amap-three",
   "dependencies": {
-    "@amap/amap-jsapi-types": "^0.0.8",
-    "@types/three": "0.143.0",
-    "three": "0.143.0"
+    "@amap/amap-jsapi-types": "^0.0.13",
+    "@types/three": "0.149.0",
+    "three": "0.149.0"
   },
   "devDependencies": {
     "@pnpm/logger": "4.0.0",
